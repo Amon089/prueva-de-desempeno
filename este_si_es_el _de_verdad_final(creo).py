@@ -32,7 +32,7 @@ def cargar_datos():
 
 # AYUDAS / LAMBDA (Cálculo ráIDo)
 # Función lambda para calcular el ingreso neto.
-calc_ingreso_neto = lambda precio, cant, desc: (precio * cant) * (1 - desc) 
+calc_ingreso_neto = lambda precio, cant, descuento: (precio * cant) * (1 - descuento) 
 
 def obtener_producto(ID):
     # Obtener productos por id.
@@ -80,7 +80,7 @@ def consultar_productos():
         print("Inventario basio.")
         return
     for ID, p in productos.items():
-        print(f"ID: {ID[:4]}... | {p['titulo']} por {p['autor']} | precio: ${p['precio']:.2f} | Stok: {p['stok']}") 
+        print(f"ID: {ID[:]}... | {p['titulo']} por {p['autor']} | precio: ${p['precio']:.2f} | Stok: {p['stok']}") 
 
 def actualizar_productos():
     # Actualizar productos existente.
@@ -114,7 +114,7 @@ def borrar_productos():
     ID = obtener_entrada("\nIngresa ID de productos a borrar: ")
     if ID in productos:
         del productos[ID]
-        print(f"productos {ID[:4]}... borrado.")
+        print(f"productos {ID[:]}... borrado.")
     else:
         print("productos no encontrado.")
 
@@ -127,7 +127,7 @@ def registrar_venta():
         ID = obtener_entrada("ID de productos: ")
         cliente = obtener_entrada("Nombre del Cliente: ")
         cant = obtener_entrada("Cant vendida: ", int)
-       # desc= obtener_entrada("Descuento (0.0 a 1.0): ", float)
+       # descuento= obtener_entrada("Descuento (0.0 a 1.0): ", float)
 
         p = obtener_producto(ID)
         if not p:
@@ -142,7 +142,10 @@ def registrar_venta():
             return
 
         # Venta raIDa
-        neto = calc_ingreso_neto(p['precio'], cant,desc) 
+
+        descuento = obtener_entrada("Descuento (0.0 a 1.0): ", float)
+
+        neto = calc_ingreso_neto(p['precio'], cant,descuento) 
         bruto = p['precio'] * cant 
 
         # Actualiza el stok
@@ -153,7 +156,7 @@ def registrar_venta():
             'product_id': ID,
             'cant': cant,
             'fecha': datetime.now().strftime("%Y-%m-%d"),
-            'desc': desc,
+            'descuento': descuento,
             'neto': neto,
             'bruto': bruto,
             'autor': p['autor'] 
@@ -215,8 +218,8 @@ def menu_reportes():
             total_bruto = sum(s['bruto'] for s in SALESS)
 
             print("\n--- INGRESO TOTAL ---")
-            print(f"BRUTO (sin desc): ${total_bruto:,.2f}")
-            print(f"NETO (con desc): ${total_neto:,.2f}")
+            print(f"BRUTO (sin descuento): ${total_bruto:,.2f}")
+            print(f"NETO (con descuento): ${total_neto:,.2f}")
             print(f"Descuento total aplicado: ${total_bruto - total_neto:,.2f}")
 
         else:
